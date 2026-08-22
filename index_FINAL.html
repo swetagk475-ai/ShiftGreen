@@ -1,0 +1,1492 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="ShiftGreen - Know Your Impact, Change Your Footprint. Track your carbon emissions and discover how to reduce your environmental impact.">
+    <meta name="keywords" content="carbon footprint, sustainability, environmental impact, carbon tracker">
+    <meta name="author" content="ShiftGreen">
+    <title>ShiftGreen - Know Your Impact, Change Your Footprint</title>
+    
+    <!-- ===== EMAILJS SCRIPT (MUST BE IN HEAD, BEFORE OTHER SCRIPTS) ===== -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>   
+     <script type="text/javascript">
+      (function(){
+        // Initialize EmailJS with your Public Key
+        // Replace YOUR_PUBLIC_KEY_HERE with your actual Public Key from EmailJS
+        emailjs.init("j-lc6wM4savjHuTC3");
+        console.log("EmailJS initialized successfully");
+      })();
+    </script>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* ===== CSS VARIABLES (Colors & Tokens) ===== */
+        :root {
+            --primary-green: #10B981;
+            --dark-green: #047857;
+            --light-green: #D1FAE5;
+            --accent-gold: #FBBF24;
+            --text-primary: #1F2937;
+            --text-secondary: #6B7280;
+            --bg-light: #F9FAFB;
+            --bg-white: #FFFFFF;
+            --border-color: #E5E7EB;
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            color: var(--text-primary);
+            background-color: var(--bg-white);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* ===== ANIMATIONS & KEYFRAMES ===== */
+        @keyframes floatParticles {
+            0% {
+                transform: translateX(-50px) translateY(0);
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.8;
+            }
+            90% {
+                opacity: 0.8;
+            }
+            100% {
+                transform: translateX(100vw) translateY(-100vh);
+                opacity: 0;
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes slideInRight {
+            from {
+                opacity: 0;
+                transform: translateX(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.5;
+            }
+        }
+
+        @keyframes breathe {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+        }
+
+        @keyframes glow {
+            0%, 100% {
+                box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+            }
+            50% {
+                box-shadow: 0 0 0 10px rgba(16, 185, 129, 0);
+            }
+        }
+
+        @keyframes typewriter {
+            from {
+                width: 0;
+                border-right: 2px solid var(--primary-green);
+            }
+            to {
+                width: 100%;
+                border-right: 2px solid var(--primary-green);
+            }
+        }
+
+        @keyframes spinnerRotate {
+            from {
+                transform: rotate(0deg);
+            }
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        @keyframes confetti {
+            0% {
+                transform: translateY(0) translateX(0) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(100px) translateX(50px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        @keyframes shimmer {
+            0% {
+                background-position: -1000px 0;
+            }
+            100% {
+                background-position: 1000px 0;
+            }
+        }
+
+        @keyframes gaugeNeedle {
+            from {
+                transform: rotate(0deg);
+            }
+            to {
+                transform: rotate(180deg);
+            }
+        }
+
+        /* ===== LAYOUT & SPACING ===== */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        section {
+            padding: 80px 0;
+        }
+
+        @media (max-width: 768px) {
+            section {
+                padding: 60px 0;
+            }
+            .container {
+                padding: 0 16px;
+            }
+        }
+
+        /* ===== TYPOGRAPHY ===== */
+        h1 {
+            font-size: 48px;
+            font-weight: 700;
+            line-height: 1.2;
+            margin-bottom: 20px;
+        }
+
+        h2 {
+            font-size: 36px;
+            font-weight: 700;
+            line-height: 1.3;
+            margin-bottom: 40px;
+            text-align: center;
+        }
+
+        h3 {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+
+        p {
+            font-size: 16px;
+            color: var(--text-secondary);
+            margin-bottom: 16px;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 32px;
+            }
+            h2 {
+                font-size: 28px;
+                margin-bottom: 30px;
+            }
+            h3 {
+                font-size: 20px;
+            }
+        }
+
+        /* ===== BUTTONS ===== */
+        .btn {
+            display: inline-block;
+            padding: 12px 32px;
+            font-size: 16px;
+            font-weight: 600;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            white-space: nowrap;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-green) 0%, var(--dark-green) 100%);
+            color: white;
+            box-shadow: var(--shadow-md);
+            background-size: 200% 200%;
+            animation: shimmer 3s infinite;
+        }
+
+        .btn-primary:hover {
+            transform: scale(1.05);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .btn-primary:active {
+            transform: scale(0.98);
+        }
+
+        .btn-secondary {
+            background: var(--light-green);
+            color: var(--dark-green);
+            border: 2px solid var(--primary-green);
+        }
+
+        .btn-secondary:hover {
+            background: var(--primary-green);
+            color: white;
+        }
+
+        .btn-small {
+            padding: 8px 24px;
+            font-size: 14px;
+        }
+
+        /* ===== HEADER / NAVBAR ===== */
+        header {
+            background: white;
+            border-bottom: 1px solid var(--border-color);
+            padding: 20px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--primary-green);
+        }
+
+        nav {
+            display: flex;
+            gap: 30px;
+        }
+
+        nav a {
+            color: var(--text-primary);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+            position: relative;
+        }
+
+        nav a:hover {
+            color: var(--primary-green);
+        }
+
+        nav a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--primary-green);
+            transition: width 0.3s ease;
+        }
+
+        nav a:hover::after {
+            width: 100%;
+        }
+
+        @media (max-width: 768px) {
+            nav {
+                display: none;
+            }
+        }
+
+        /* ===== HERO SECTION ===== */
+        .hero {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.05) 0%, rgba(209, 250, 229, 0.3) 100%);
+            position: relative;
+            overflow: hidden;
+            padding: 100px 0;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100"><circle cx="50" cy="50" r="3" fill="rgba(16,185,129,0.1)"/></svg>');
+            pointer-events: none;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        .hero h1 {
+            color: var(--text-primary);
+            margin-bottom: 20px;
+        }
+
+        .hero-subtitle {
+            font-size: 20px;
+            color: var(--text-secondary);
+            margin-bottom: 30px;
+            line-height: 1.6;
+            max-width: 600px;
+        }
+
+        .hero-subtext {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 40px;
+            font-style: italic;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+            margin-bottom: 40px;
+        }
+
+        /* Floating particles in hero */
+        .particle {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background: var(--primary-green);
+            border-radius: 50%;
+            opacity: 0;
+            animation: floatParticles 8s linear infinite;
+        }
+
+        .particle:nth-child(1) { left: 10%; animation-delay: 0s; }
+        .particle:nth-child(2) { left: 20%; animation-delay: 1s; }
+        .particle:nth-child(3) { left: 30%; animation-delay: 2s; }
+        .particle:nth-child(4) { left: 40%; animation-delay: 3s; }
+        .particle:nth-child(5) { left: 50%; animation-delay: 4s; }
+        .particle:nth-child(6) { left: 60%; animation-delay: 5s; }
+        .particle:nth-child(7) { left: 70%; animation-delay: 6s; }
+
+        /* ===== FEATURES SECTION ===== */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 40px;
+            margin-top: 60px;
+        }
+
+        .feature-card {
+            background: white;
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 40px;
+            transition: all 0.3s ease;
+            animation: slideInUp 0.6s ease-out;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--shadow-lg);
+            border-color: var(--primary-green);
+        }
+
+        .feature-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--light-green), rgba(16, 185, 129, 0.1));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .feature-card:hover .feature-icon {
+            transform: scale(1.1);
+            filter: drop-shadow(0 4px 12px rgba(16, 185, 129, 0.2));
+        }
+
+        .feature-card h3 {
+            color: var(--text-primary);
+            margin-bottom: 12px;
+        }
+
+        .feature-subtitle {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--primary-green);
+            margin-bottom: 8px;
+        }
+
+        /* ===== HOW IT WORKS SECTION ===== */
+        .steps-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            margin-top: 60px;
+            position: relative;
+        }
+
+        .step {
+            background: white;
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            padding: 40px;
+            text-align: center;
+            transition: all 0.3s ease;
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        .step:hover {
+            border-color: var(--primary-green);
+            box-shadow: var(--shadow-lg);
+            transform: translateY(-8px);
+        }
+
+        .step-number {
+            font-size: 48px;
+            font-weight: 700;
+            color: var(--primary-green);
+            margin-bottom: 12px;
+        }
+
+        .step h3 {
+            text-align: center;
+            margin-bottom: 12px;
+        }
+
+        /* ===== INTERACTIVE DEMO SECTION ===== */
+        .demo-card {
+            background: linear-gradient(135deg, var(--light-green) 0%, rgba(16, 185, 129, 0.05) 100%);
+            border-radius: 12px;
+            padding: 40px;
+            margin-top: 40px;
+        }
+
+        .demo-card h3 {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .calculator-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .slider-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .slider-group label {
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--text-primary);
+        }
+
+        .slider-group input[type="range"] {
+            width: 100%;
+            height: 6px;
+            border-radius: 3px;
+            background: var(--border-color);
+            outline: none;
+            -webkit-appearance: none;
+            appearance: none;
+        }
+
+        .slider-group input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: var(--primary-green);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: var(--shadow-md);
+        }
+
+        .slider-group input[type="range"]::-webkit-slider-thumb:hover {
+            transform: scale(1.2);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .slider-group input[type="range"]::-moz-range-thumb {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: var(--primary-green);
+            cursor: pointer;
+            border: none;
+            transition: all 0.3s ease;
+            box-shadow: var(--shadow-md);
+        }
+
+        .slider-value {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-top: 8px;
+        }
+
+        .gauge-container {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .gauge-value {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--primary-green);
+            margin-bottom: 8px;
+        }
+
+        .gauge-label {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .gauge-status {
+            font-size: 14px;
+            margin-top: 16px;
+            padding: 12px;
+            border-radius: 8px;
+            background: var(--light-green);
+            color: var(--dark-green);
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        /* ===== TESTIMONIALS SECTION ===== */
+        .testimonials-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 60px;
+        }
+
+        .testimonial {
+            background: white;
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 30px;
+            transition: all 0.3s ease;
+            animation: slideInLeft 0.6s ease-out;
+        }
+
+        .testimonial:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .testimonial-text {
+            font-size: 16px;
+            font-style: italic;
+            color: var(--text-secondary);
+            margin-bottom: 16px;
+            min-height: 80px;
+        }
+
+        .testimonial-author {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .stars {
+            color: var(--accent-gold);
+            margin-bottom: 12px;
+        }
+
+        /* ===== FORM SECTION ===== */
+        .form-section {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.05) 0%, rgba(209, 250, 229, 0.2) 100%);
+            border-radius: 12px;
+            padding: 60px 40px;
+            max-width: 500px;
+            margin: 60px auto 0;
+        }
+
+        .form-section h2 {
+            text-align: center;
+            margin-bottom: 12px;
+        }
+
+        .form-subtitle {
+            text-align: center;
+            color: var(--text-secondary);
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+
+        .form-group {
+            margin-bottom: 24px;
+            position: relative;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--text-primary);
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            font-family: inherit;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--primary-green);
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+        }
+
+        .form-group input.valid {
+            border-color: var(--primary-green);
+            background: linear-gradient(to right, rgba(16, 185, 129, 0.02), transparent);
+        }
+
+        .form-group input.invalid {
+            border-color: #EF4444;
+            background: linear-gradient(to right, rgba(239, 68, 68, 0.02), transparent);
+        }
+
+        .validation-icon {
+            position: absolute;
+            right: 12px;
+            top: 38px;
+            font-size: 18px;
+            display: none;
+        }
+
+        .form-group input.valid ~ .validation-icon {
+            display: block;
+            color: var(--primary-green);
+        }
+
+        .form-group input.invalid ~ .validation-icon {
+            display: block;
+            color: #EF4444;
+        }
+
+        .form-checkbox {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .form-checkbox input {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+            accent-color: var(--primary-green);
+        }
+
+        .form-checkbox label {
+            margin: 0;
+            cursor: pointer;
+            font-weight: 400;
+        }
+
+        .form-submit {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, var(--primary-green) 0%, var(--dark-green) 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .form-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .form-submit:active {
+            transform: translateY(0);
+        }
+
+        .form-submit.loading {
+            pointer-events: none;
+            opacity: 0.8;
+        }
+
+        .spinner {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spinnerRotate 0.8s linear infinite;
+            margin-right: 8px;
+        }
+
+        .form-message {
+            text-align: center;
+            margin-top: 16px;
+            padding: 12px;
+            border-radius: 8px;
+            display: none;
+            animation: fadeInUp 0.4s ease-out;
+        }
+
+        .form-message.success {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--dark-green);
+            display: block;
+        }
+
+        .form-message.error {
+            background: rgba(239, 68, 68, 0.1);
+            color: #DC2626;
+            display: block;
+        }
+
+        .form-trust {
+            text-align: center;
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-top: 16px;
+        }
+
+        /* ===== DASHBOARD PREVIEW SECTION ===== */
+        .dashboard-preview {
+            background: white;
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            overflow: hidden;
+            margin-top: 60px;
+            box-shadow: var(--shadow-md);
+        }
+
+        .dashboard-header {
+            background: linear-gradient(135deg, var(--primary-green) 0%, var(--dark-green) 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .dashboard-header h3 {
+            color: white;
+            margin-bottom: 8px;
+        }
+
+        .dashboard-body {
+            padding: 40px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+        }
+
+        .dashboard-card {
+            background: var(--bg-light);
+            border-radius: 12px;
+            padding: 24px;
+            text-align: center;
+        }
+
+        .dashboard-metric {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--primary-green);
+            margin-bottom: 8px;
+        }
+
+        .dashboard-label {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* ===== FOOTER ===== */
+        footer {
+            background: var(--text-primary);
+            color: white;
+            padding: 60px 0 20px;
+            margin-top: 80px;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+
+        .footer-section h4 {
+            margin-bottom: 16px;
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .footer-links {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: 12px;
+        }
+
+        .footer-links a {
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            transition: color 0.3s ease;
+            position: relative;
+        }
+
+        .footer-links a:hover {
+            color: var(--primary-green);
+        }
+
+        .footer-links a:hover::before {
+            content: '🍃 ';
+            animation: slideInLeft 0.3s ease-out;
+        }
+
+        .footer-bottom {
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding-top: 20px;
+            text-align: center;
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 14px;
+        }
+
+        /* ===== RESPONSIVE DESIGN ===== */
+        @media (max-width: 768px) {
+            .hero {
+                padding: 60px 0;
+            }
+
+            .hero h1 {
+                font-size: 32px;
+            }
+
+            .hero-subtitle {
+                font-size: 18px;
+            }
+
+            .hero-buttons {
+                flex-direction: column;
+            }
+
+            .hero-buttons .btn {
+                width: 100%;
+                text-align: center;
+            }
+
+            .features-grid,
+            .steps-container,
+            .testimonials-container,
+            .calculator-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .form-section {
+                padding: 40px 24px;
+            }
+
+            .dashboard-body {
+                padding: 24px;
+                grid-template-columns: 1fr;
+            }
+
+            .footer-content {
+                grid-template-columns: 1fr;
+                gap: 30px;
+            }
+        }
+
+        /* ===== UTILITIES ===== */
+        .text-center {
+            text-align: center;
+        }
+
+        .mt-40 {
+            margin-top: 40px;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        /* Respect user's motion preferences */
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                animation: none !important;
+                transition: none !important;
+            }
+        }
+
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ===== HEADER ===== -->
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">🌍 ShiftGreen</div>
+                <nav>
+                    <a href="#features">Features</a>
+                    <a href="#how-it-works">How It Works</a>
+                    <a href="#form">Get Started</a>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- ===== HERO SECTION ===== -->
+    <section class="hero">
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+
+        <div class="container">
+            <div class="hero-content">
+                <h1>Know Your Impact, Change Your Footprint</h1>
+                <p class="hero-subtitle">Small choices add up. See how your everyday habits affect the planet, discover where you can make a difference, and turn awareness into action.</p>
+                <p class="hero-subtext">No guilt. No perfection required. Just a clearer picture of your impact—and practical ways to make it better.</p>
+                <div class="hero-buttons">
+                    <a href="#form" class="btn btn-primary">Start Your Sustainability Journey</a>
+                    <a href="#demo" class="btn btn-secondary">Try Interactive Demo</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== FEATURES SECTION ===== -->
+    <section id="features">
+        <div class="container">
+            <h2>Make Your Impact Visible</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">📝</div>
+                    <p class="feature-subtitle">LOG YOUR DAY</p>
+                    <h3>Track the choices that shape your footprint—from how you travel to what you eat and how you use energy.</h3>
+                    <p>Daily logging makes sustainability simple and tangible.</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">📊</div>
+                    <p class="feature-subtitle">SEE THE BIGGER PICTURE</p>
+                    <h3>Turn your activity into clear, visual insights.</h3>
+                    <p>Understand where your footprint comes from, spot patterns, and see how your impact changes over time.</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">💡</div>
+                    <p class="feature-subtitle">DISCOVER WHAT MAKES A DIFFERENCE</p>
+                    <h3>Curious whether cycling to work, eating more plant-based meals, or using less energy really matters?</h3>
+                    <p>See the potential impact of different behavioral changes and focus your effort where it counts.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== HOW IT WORKS SECTION ===== -->
+    <section id="how-it-works">
+        <div class="container">
+            <h2>Three Simple Steps Toward a Lighter Footprint</h2>
+            <div class="steps-container">
+                <div class="step">
+                    <div class="step-number">01</div>
+                    <h3>Log</h3>
+                    <p>Capture your everyday choices in just a few moments.</p>
+                </div>
+
+                <div class="step">
+                    <div class="step-number">02</div>
+                    <h3>Calculate</h3>
+                    <p>Get a personalized estimate of your carbon footprint and see what's driving it.</p>
+                </div>
+
+                <div class="step">
+                    <div class="step-number">03</div>
+                    <h3>Reduce</h3>
+                    <p>Explore realistic changes, choose what works for you, and watch your footprint evolve.</p>
+                </div>
+            </div>
+            <p class="text-center mt-40" style="font-style: italic; font-weight: 500;">Better choices don't have to happen all at once. Start with one.</p>
+        </div>
+    </section>
+
+    <!-- ===== INTERACTIVE DEMO SECTION ===== -->
+    <section id="demo">
+        <div class="container">
+            <h2>Try It Right Now</h2>
+            <div class="demo-card">
+                <h3>Live Carbon Calculator</h3>
+                <div class="calculator-grid">
+                    <div class="slider-group">
+                        <label for="transport">Daily Transport (km)</label>
+                        <input type="range" id="transport" min="0" max="50" value="10">
+                        <div class="slider-value"><span id="transportValue">10</span> km/day</div>
+                    </div>
+                    <div class="slider-group">
+                        <label for="energy">Monthly Energy (kWh)</label>
+                        <input type="range" id="energy" min="0" max="500" value="100">
+                        <div class="slider-value"><span id="energyValue">100</span> kWh/month</div>
+                    </div>
+                    <div class="slider-group">
+                        <label for="food">Weekly Meals</label>
+                        <input type="range" id="food" min="0" max="100" value="21">
+                        <div class="slider-value"><span id="foodValue">21</span> meals/week</div>
+                    </div>
+                </div>
+
+                <div class="gauge-container">
+                    <div class="gauge-value" id="totalCarbon">0</div>
+                    <div class="gauge-label">kg CO₂ per year</div>
+                    <div class="gauge-status" id="gaugeStatus">Calculate your carbon footprint above</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== TESTIMONIALS SECTION ===== -->
+    <section>
+        <div class="container">
+            <h2>Progress Looks Different for Everyone</h2>
+            <div class="testimonials-container">
+                <div class="testimonial">
+                    <div class="stars">★★★★★</div>
+                    <p class="testimonial-text">"I always wanted to live more sustainably, but I didn't know where to start. Seeing my habits laid out made it much easier to choose one change at a time."</p>
+                    <p class="testimonial-author">— Environmental Advocate</p>
+                </div>
+
+                <div class="testimonial">
+                    <div class="stars">★★★★★</div>
+                    <p class="testimonial-text">"I'm busy, so sustainability can't feel like another project on my to-do list. The tracker gives me a quick way to understand my impact and make smarter everyday choices."</p>
+                    <p class="testimonial-author">— Busy Professional</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== FORM SECTION ===== -->
+    <section id="form">
+        <div class="container">
+            <div class="form-section">
+                <h2>Ready to Understand Your Impact?</h2>
+                <p class="form-subtitle">Start tracking your carbon footprint today. It takes less than 2 minutes.</p>
+
+                <form id="leadForm">
+                    <div class="form-group">
+                        <label for="name">Name *</label>
+                        <input type="text" id="name" name="name" required>
+                        <span class="validation-icon">✓</span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email">Email *</label>
+                        <input type="email" id="email" name="email" required>
+                        <span class="validation-icon">✓</span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="phone">Phone (Optional)</label>
+                        <input type="tel" id="phone" name="phone">
+                        <span class="validation-icon">✓</span>
+                    </div>
+
+                    <div class="form-checkbox">
+                        <input type="checkbox" id="newsletter" name="newsletter">
+                        <label for="newsletter">I want sustainability tips via email</label>
+                    </div>
+
+                    <button type="submit" class="form-submit" id="submitBtn">Get Started Free</button>
+                    <div class="form-message" id="formMessage"></div>
+                </form>
+
+                <p class="form-trust">🌱 No spam. No judgement. Just actionable insights.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== DASHBOARD PREVIEW SECTION ===== -->
+    <section>
+        <div class="container">
+            <div class="dashboard-preview">
+                <div class="dashboard-header">
+                    <h3>Your Personalized Dashboard Preview</h3>
+                    <p>This is what you'll see after signing up</p>
+                </div>
+                <div class="dashboard-body">
+                    <div class="dashboard-card">
+                        <div class="dashboard-metric">4.2T</div>
+                        <div class="dashboard-label">Annual Carbon Footprint</div>
+                    </div>
+                    <div class="dashboard-card">
+                        <div class="dashboard-metric">↓ 18%</div>
+                        <div class="dashboard-label">Reduction This Month</div>
+                    </div>
+                    <div class="dashboard-card">
+                        <div class="dashboard-metric">156</div>
+                        <div class="dashboard-label">Days Tracked</div>
+                    </div>
+                    <div class="dashboard-card">
+                        <div class="dashboard-metric">5</div>
+                        <div class="dashboard-label">Milestones Achieved</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== FOOTER ===== -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4>ShiftGreen</h4>
+                    <p>Your footprint is more than a number. It's an opportunity to understand your choices and build habits that work for your life.</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Quick Links</h4>
+                    <ul class="footer-links">
+                        <li><a href="#features">How It Works</a></li>
+                        <li><a href="#form">Get Started</a></li>
+                        <li><a href="#">About Us</a></li>
+                        <li><a href="#">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Support</h4>
+                    <ul class="footer-links">
+                        <li><a href="#">FAQ</a></li>
+                        <li><a href="#">Privacy Policy</a></li>
+                        <li><a href="#">Terms of Service</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <p>&copy; 2026 ShiftGreen. Built for sustainable living. 🌍</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- ===== JAVASCRIPT ===== -->
+    <script>
+        // Wait for EmailJS to be ready before initializing form
+        // This ensures emailjs is defined before trying to use it
+        function waitForEmailJS() {
+            if (typeof emailjs !== 'undefined') {
+                console.log("EmailJS is ready!");
+                initializeForm();
+            } else {
+                console.log("Waiting for EmailJS to load...");
+                setTimeout(waitForEmailJS, 100);
+            }
+        }
+
+        // Initialize form after EmailJS loads
+        function initializeForm() {
+            // ===== FORM HANDLING & VALIDATION =====
+            const form = document.getElementById('leadForm');
+            const nameInput = document.getElementById('name');
+            const emailInput = document.getElementById('email');
+            const phoneInput = document.getElementById('phone');
+            const submitBtn = document.getElementById('submitBtn');
+            const formMessage = document.getElementById('formMessage');
+
+            // AppScript URL
+            const APPSCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxaOzqUVfRJWBMlPuwWVS58c0FH4R-KTuqi5NAAEESC8Eaw-2vclwnYrZ1BitOztaLC2A/exec';
+
+            // Real-time validation
+            nameInput.addEventListener('blur', validateName);
+            emailInput.addEventListener('blur', validateEmail);
+            phoneInput.addEventListener('blur', validatePhone);
+
+            function validateName() {
+                if (nameInput.value.trim().length > 2) {
+                    nameInput.classList.add('valid');
+                    nameInput.classList.remove('invalid');
+                } else {
+                    nameInput.classList.remove('valid');
+                    nameInput.classList.add('invalid');
+                }
+            }
+
+            function validateEmail() {
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (emailRegex.test(emailInput.value)) {
+                    emailInput.classList.add('valid');
+                    emailInput.classList.remove('invalid');
+                } else {
+                    emailInput.classList.remove('valid');
+                    emailInput.classList.add('invalid');
+                }
+            }
+
+            function validatePhone() {
+                const phoneRegex = /^[0-9\s\-\+\(\)]*$/;
+                if (phoneInput.value === '' || phoneRegex.test(phoneInput.value)) {
+                    phoneInput.classList.add('valid');
+                    phoneInput.classList.remove('invalid');
+                } else {
+                    phoneInput.classList.remove('valid');
+                    phoneInput.classList.add('invalid');
+                }
+            }
+
+            // Form submission
+            form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            validateName();
+            validateEmail();
+            validatePhone();
+
+            if (!nameInput.classList.contains('valid') || !emailInput.classList.contains('valid')) {
+                showError('Please fill in all required fields correctly.');
+                return;
+            }
+
+            const name = nameInput.value.trim();
+            const email = emailInput.value.trim();
+            const phone = phoneInput.value.trim();
+
+            // Show loading state
+            submitBtn.classList.add('loading');
+            submitBtn.innerHTML = '<span class="spinner"></span>Setting up your account...';
+
+            try {
+                const url = APPSCRIPT_URL + '?' + new URLSearchParams({
+                    name: name,
+                    email: email,
+                    phone: phone
+                });
+
+                // Fire request to Google Sheets (no-cors bypasses 403 / CORS restrictions)
+                fetch(url, { method: 'GET' })
+                    .then(response => console.log("Data saved to Sheets"))
+                    .catch(error => console.error("Sheets error:", error));
+
+
+                // Send welcome email via EmailJS
+                console.log("Sending email via EmailJS...");
+                await emailjs.send(
+                    'service_i29x3pd',  // ⬅️ Replace with your actual EmailJS Service ID
+                    'template_bkotzr8', // ⬅️ Replace with your actual EmailJS Template ID
+                    {
+                       name: name,
+                       email: email,
+                       to_email: email
+                    }
+                );
+                console.log("Email sent successfully!");
+
+                // Show success state
+                showSuccess('Welcome to ShiftGreen! Check your email for next steps.');
+                form.reset();
+                nameInput.classList.remove('valid');
+                emailInput.classList.remove('valid');
+                phoneInput.classList.remove('valid');
+
+            } catch (error) {
+                console.error('Form submission error:', error);
+                showError('Something went wrong. Please try again.');
+            } finally {
+                submitBtn.classList.remove('loading');
+                submitBtn.innerHTML = 'Get Started Free';
+            }
+        });
+
+            function showSuccess(message) {
+                formMessage.textContent = '✓ ' + message;
+                formMessage.classList.add('success');
+                formMessage.classList.remove('error');
+            }
+
+            function showError(message) {
+                formMessage.textContent = '✗ ' + message;
+                formMessage.classList.add('error');
+                formMessage.classList.remove('success');
+            }
+        }
+
+        // Start waiting for EmailJS
+        waitForEmailJS();
+
+        // ===== INTERACTIVE CALCULATOR =====
+        const transportSlider = document.getElementById('transport');
+        const energySlider = document.getElementById('energy');
+        const foodSlider = document.getElementById('food');
+
+        const transportValue = document.getElementById('transportValue');
+        const energyValue = document.getElementById('energyValue');
+        const foodValue = document.getElementById('foodValue');
+        const totalCarbon = document.getElementById('totalCarbon');
+        const gaugeStatus = document.getElementById('gaugeStatus');
+
+        // Emission factors
+        const TRANSPORT_FACTOR = 0.21; // kg CO2 per km
+        const ENERGY_FACTOR = 0.4; // kg CO2 per kWh
+        const FOOD_FACTOR = 2.5; // kg CO2 per meal (average)
+
+        function calculateCarbon() {
+            const transport = parseInt(transportSlider.value);
+            const energy = parseInt(energySlider.value);
+            const food = parseInt(foodSlider.value);
+
+            // Update display values
+            transportValue.textContent = transport;
+            energyValue.textContent = energy;
+            foodValue.textContent = food;
+
+            // Calculate annual carbon (simplistic)
+            const transportCarbon = transport * 365 * TRANSPORT_FACTOR;
+            const energyCarbon = energy * 12 * ENERGY_FACTOR;
+            const foodCarbon = food * 52 * FOOD_FACTOR;
+            const total = transportCarbon + energyCarbon + foodCarbon;
+
+            // Update gauge
+            totalCarbon.textContent = total.toFixed(1);
+
+            // Update status message with color feedback
+            const avgFootprint = 4000; // average annual footprint in kg CO2
+            const percentage = ((avgFootprint - total) / avgFootprint * 100).toFixed(0);
+
+            if (total < avgFootprint) {
+                gaugeStatus.textContent = `✓ You're ${percentage}% below average! Keep it up!`;
+                gaugeStatus.style.background = 'rgba(16, 185, 129, 0.1)';
+                gaugeStatus.style.color = 'var(--dark-green)';
+            } else if (total < avgFootprint * 1.2) {
+                gaugeStatus.textContent = `~ You're close to average. Small changes make a big impact!`;
+                gaugeStatus.style.background = 'rgba(251, 191, 36, 0.1)';
+                gaugeStatus.style.color = '#B45309';
+            } else {
+                gaugeStatus.textContent = `↑ Your footprint is above average. Try reducing one category!`;
+                gaugeStatus.style.background = 'rgba(239, 68, 68, 0.1)';
+                gaugeStatus.style.color = '#DC2626';
+            }
+        }
+
+        transportSlider.addEventListener('input', calculateCarbon);
+        energySlider.addEventListener('input', calculateCarbon);
+        foodSlider.addEventListener('input', calculateCarbon);
+
+        // Initial calculation
+        calculateCarbon();
+
+        // ===== SMOOTH SCROLL =====
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+        });
+
+        // ===== SCROLL ANIMATIONS =====
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.feature-card, .step, .testimonial, .dashboard-card').forEach(el => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(20px)';
+            el.style.transition = 'opacity 0.6s ease-out, transform 0.6s ease-out';
+            observer.observe(el);
+        });
+
+    </script>
+
+</body>
+</html>
