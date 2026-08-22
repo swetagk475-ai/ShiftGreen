@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>ShiftGreen Dashboard</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --primary: #10B981;
+            --dark: #047857;
+            --light: #D1FAE5;
+            --bg: #F9FAFB;
+            --text: #1F2937;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, var(--light) 0%, rgba(16,185,129,0.05) 100%);
+            padding: 20px;
+            color: var(--text);
+        }
+        .container { max-width: 800px; margin: 0 auto; }
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            animation: slideInDown 0.6s ease-out;
+        }
+        h1 { font-size: 36px; margin-bottom: 8px; color: var(--primary); }
+        .subtitle { color: #6B7280; font-size: 16px; }
+        
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            animation: fadeInUp 0.6s ease-out;
+        }
+        
+        .form-group {
+            margin-bottom: 24px;
+        }
+        label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: var(--text);
+        }
+        input, select, textarea {
+            width: 100%;
+            padding: 10px 12px;
+            border: 2px solid #E5E7EB;
+            border-radius: 8px;
+            font-size: 16px;
+            font-family: inherit;
+            transition: all 0.3s ease;
+        }
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(16,185,129,0.1);
+        }
+        
+        .radio-group, .checkbox-group {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        
+        .radio-item, .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        input[type="radio"], input[type="checkbox"] {
+            width: auto;
+            cursor: pointer;
+        }
+        
+        .toggle {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        input[type="checkbox"].toggle-switch {
+            width: 50px;
+            height: 24px;
+            position: relative;
+            appearance: none;
+            background: #D1D5DB;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        
+        input[type="checkbox"].toggle-switch:checked {
+            background: var(--primary);
+        }
+        
+        .insights {
+            background: linear-gradient(135deg, var(--light) 0%, rgba(16,185,129,0.05) 100%);
+            border-left: 4px solid var(--primary);
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 24px;
+        }
+        
+        .insights h3 {
+            margin-bottom: 12px;
+            color: var(--dark);
+        }
+        
+        .tips-list {
+            list-style: none;
+            margin-top: 12px;
+        }
+        
+        .tips-list li {
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(4,120,87,0.1);
+            font-size: 14px;
+        }
+        
+        .tips-list li:before {
+            content: "🌱 ";
+            margin-right: 8px;
+        }
+        
+        button {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--dark) 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px rgba(16,185,129,0.2);
+        }
+        
+        .success-message {
+            background: rgba(16,185,129,0.1);
+            border-left: 4px solid var(--primary);
+            padding: 16px;
+            border-radius: 8px;
+            margin-bottom: 24px;
+            display: none;
+        }
+        
+        .success-message.show {
+            display: block;
+            animation: slideInDown 0.4s ease-out;
+        }
+        
+        @keyframes slideInDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🌍 Welcome to ShiftGreen!</h1>
+            <p class="subtitle" id="userName">Let's understand your carbon footprint</p>
+        </header>
+
+        <div class="success-message" id="successMsg">
+            ✓ Your preferences have been saved!
+        </div>
+
+        <!-- Carbon Footprint Card -->
+        <div class="card">
+            <h2>Your Carbon Footprint</h2>
+            <div class="insights">
+                <h3>Annual Estimate</h3>
+                <p style="font-size: 28px; font-weight: 700; color: var(--primary);" id="carbonFootprint">0</p>
+                <p style="font-size: 14px; color: #6B7280; margin-top: 8px;" id="carbonStatus">Calculating...</p>
+            </div>
+        </div>
+
+        <!-- Onboarding Form -->
+        <form id="onboardingForm" class="card">
+            <h2 style="margin-bottom: 24px;">Let's Personalize Your Experience</h2>
+
+            <!-- Question 1 -->
+            <div class="form-group">
+                <label>What's your main sustainability goal?</label>
+                <div class="radio-group">
+                    <div class="radio-item">
+                        <input type="radio" id="goal1" name="goal" value="reduce_energy" required>
+                        <label for="goal1" style="margin: 0;">Reduce energy use at home</label>
+                    </div>
+                    <div class="radio-item">
+                        <input type="radio" id="goal2" name="goal" value="sustainable_transport">
+                        <label for="goal2" style="margin: 0;">Use sustainable transportation</label>
+                    </div>
+                    <div class="radio-item">
+                        <input type="radio" id="goal3" name="goal" value="plant_based">
+                        <label for="goal3" style="margin: 0;">Eat more plant-based foods</label>
+                    </div>
+                    <div class="radio-item">
+                        <input type="radio" id="goal4" name="goal" value="general">
+                        <label for="goal4" style="margin: 0;">General environmental impact</label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Question 2 -->
+            <div class="form-group">
+                <label for="frequency">How often can you track activities?</label>
+                <select id="frequency" name="frequency" required>
+                    <option value="">-- Select --</option>
+                    <option value="daily">Daily</option>
+                    <option value="weekly">Weekly</option>
+                    <option value="monthly">Monthly</option>
+                    <option value="occasional">Whenever I remember</option>
+                </select>
+            </div>
+
+            <!-- Question 3 -->
+            <div class="form-group">
+                <label>What interests you most? (Select all that apply)</label>
+                <div class="checkbox-group">
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="interest1" name="interests" value="tips">
+                        <label for="interest1" style="margin: 0;">Sustainability tips</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="interest2" name="interests" value="data">
+                        <label for="interest2" style="margin: 0;">Carbon tracking data</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="interest3" name="interests" value="community">
+                        <label for="interest3" style="margin: 0;">Community challenges</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="interest4" name="interests" value="news">
+                        <label for="interest4" style="margin: 0;">Environmental news</label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Question 4 -->
+            <div class="form-group">
+                <label>Can we send you weekly tips & updates?</label>
+                <div class="toggle">
+                    <input type="checkbox" id="emailPref" name="emailPref" class="toggle-switch" checked>
+                    <span id="toggleLabel">Yes, send me tips!</span>
+                </div>
+            </div>
+
+            <button type="submit">Save My Preferences</button>
+        </form>
+
+        <!-- Tips Based on Goal -->
+        <div class="card" id="tipsCard" style="display: none;">
+            <h3>🌱 Personalized Tips for You</h3>
+            <ul class="tips-list" id="tipsList"></ul>
+        </div>
+    </div>
+
+    <script>
+        // Get email from URL params
+        const params = new URLSearchParams(window.location.search);
+        const userEmail = params.get('email') || 'User';
+        
+        // Get values from previous form (stored in sessionStorage)
+        const transport = sessionStorage.getItem('transport') || 10;
+        const energy = sessionStorage.getItem('energy') || 100;
+        const food = sessionStorage.getItem('food') || 21;
+
+        // Update greeting
+        document.getElementById('userName').textContent = `Hi ${decodeURIComponent(userEmail)}! Let's understand your carbon footprint.`;
+
+        // Calculate carbon footprint
+        function calculateCarbon() {
+            const transportCarbon = transport * 365 * 0.21;
+            const energyCarbon = energy * 12 * 0.4;
+            const foodCarbon = food * 52 * 2.5;
+            const total = transportCarbon + energyCarbon + foodCarbon;
+            
+            document.getElementById('carbonFootprint').textContent = total.toFixed(0) + ' kg CO₂/yr';
+            
+            const average = 4000;
+            if (total < average) {
+                document.getElementById('carbonStatus').textContent = `✓ You're ${((average - total) / average * 100).toFixed(0)}% below average!`;
+            } else {
+                document.getElementById('carbonStatus').textContent = `You're ${((total - average) / average * 100).toFixed(0)}% above average. Room to improve!`;
+            }
+        }
+
+        calculateCarbon();
+
+        // Tips based on goal
+        const tipsByGoal = {
+            'reduce_energy': [
+                'Switch to LED bulbs (save 75% on lighting)',
+                'Use a programmable thermostat',
+                'Unplug devices when not in use',
+                'Use an energy-efficient refrigerator'
+            ],
+            'sustainable_transport': [
+                'Bike or walk for trips under 2km',
+                'Use public transit instead of driving',
+                'Carpool when possible',
+                'Consider an electric or hybrid vehicle'
+            ],
+            'plant_based': [
+                'Try Meatless Mondays',
+                'Replace beef with plant-based proteins',
+                'Buy local seasonal produce',
+                'Reduce food waste (meal planning)'
+            ],
+            'general': [
+                'Track your carbon footprint regularly',
+                'Share tips with friends & family',
+                'Support renewable energy initiatives',
+                'Reduce overall consumption'
+            ]
+        };
+
+        // Form submission
+        document.getElementById('onboardingForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const goal = document.querySelector('input[name="goal"]:checked').value;
+            const frequency = document.getElementById('frequency').value;
+            const interests = Array.from(document.querySelectorAll('input[name="interests"]:checked'))
+                .map(cb => cb.value).join(', ');
+            const emailPref = document.getElementById('emailPref').checked;
+
+            // Show tips
+            const tips = tipsByGoal[goal] || [];
+            const tipsList = document.getElementById('tipsList');
+            tipsList.innerHTML = tips.map(tip => `<li>${tip}</li>`).join('');
+            document.getElementById('tipsCard').style.display = 'block';
+
+            // Save to Google Sheet via AppScript
+            try {
+                const APPSCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzPEgAX5kGcGkOwZxe7ntreX7bgFoqC2A0HWujhg_ccj7kO7XFnHdFkcwWVKGZdffU6UA/exec';
+                
+                // Construct request body with action = updatePreferences
+                const payload = new URLSearchParams({
+                    action: 'updatePreferences',
+                    email: userEmail,
+                    goal: goal,
+                    frequency: frequency,
+                    interests: interests,
+                    emailPref: emailPref ? 'Yes' : 'No',
+                    transport: transport,
+                    energy: energy,
+                    food: food
+                });
+
+                await fetch(APPSCRIPT_URL, { 
+                    method: 'POST', 
+                    mode: 'no-cors',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: payload.toString()
+                });
+            } catch (err) {
+                console.log('Data saved locally', err);
+            }
+
+            // Show success
+            document.getElementById('successMsg').classList.add('show');
+            setTimeout(() => {
+                document.getElementById('successMsg').classList.remove('show');
+            }, 3000);
+
+            // Scroll to tips
+            document.getElementById('tipsCard').scrollIntoView({ behavior: 'smooth' });
+        });
+
+        // Toggle label
+        document.getElementById('emailPref').addEventListener('change', (e) => {
+            document.getElementById('toggleLabel').textContent = e.target.checked 
+                ? 'Yes, send me tips!' 
+                : 'No thanks';
+        });
+    </script>
+</body>
+</html>

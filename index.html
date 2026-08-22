@@ -1274,7 +1274,7 @@
             const formMessage = document.getElementById('formMessage');
 
             // AppScript URL
-            const APPSCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxaOzqUVfRJWBMlPuwWVS58c0FH4R-KTuqi5NAAEESC8Eaw-2vclwnYrZ1BitOztaLC2A/exec';
+            const APPSCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzPEgAX5kGcGkOwZxe7ntreX7bgFoqC2A0HWujhg_ccj7kO7XFnHdFkcwWVKGZdffU6UA/exec';
 
             // Real-time validation
             nameInput.addEventListener('blur', validateName);
@@ -1329,6 +1329,26 @@
             const name = nameInput.value.trim();
             const email = emailInput.value.trim();
             const phone = phoneInput.value.trim();
+            // Inside your form submit event listener in index.html:
+
+            // 1. Grab values from your live calculator sliders
+            const transportVal = document.getElementById('transport').value;
+            const energyVal = document.getElementById('energy').value;
+            const foodVal = document.getElementById('food').value;
+
+            // 2. Save calculator state to sessionStorage
+            sessionStorage.setItem('transport', transportVal);
+            sessionStorage.setItem('energy', energyVal);
+            sessionStorage.setItem('food', foodVal);
+
+            // 3. Show success status
+            showSuccess('Welcome to ShiftGreen! Redirecting to your onboarding...');
+            form.reset();
+
+// 4. Redirect to dashboard.html with email as a URL parameter after 1.5s
+            setTimeout(() => {
+                window.location.href = `dashboard.html?email=${encodeURIComponent(email)}`;
+            }, 1500);
 
             // Show loading state
             submitBtn.classList.add('loading');
