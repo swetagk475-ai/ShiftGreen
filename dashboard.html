@@ -168,6 +168,28 @@
             to { opacity: 1; transform: translateY(0); }
         }
     </style>
+
+    <!-- Firebase & Chart.js Scripts -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+
+    <script>
+        // Firebase Configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyDNj6vhJxrvz4p-8LLNwfGBi5WUEUazAhM",
+            authDomain: "shiftgreen-b4323.firebaseapp.com",
+            projectId: "shiftgreen-b4323",
+            storageBucket: "shiftgreen-b4323.firebasestorage.app",
+            messagingSenderId: "964062537154",
+            appId: "1:964062537154:web:e46e85622eb33a4a13225b"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        console.log("Firebase initialized");
+    </script>
 </head>
 <body>
     <div class="container">
@@ -270,7 +292,6 @@
             <ul class="tips-list" id="tipsList"></ul>
         </div>
     </div>
-
     <script>
         // Get email from URL params
         const params = new URLSearchParams(window.location.search);
@@ -302,6 +323,7 @@
         }
 
         calculateCarbon();
+        
 
         // Tips based on goal
         const tipsByGoal = {
@@ -347,11 +369,34 @@
             tipsList.innerHTML = tips.map(tip => `<li>${tip}</li>`).join('');
             document.getElementById('tipsCard').style.display = 'block';
 
-            // Save to Google Sheet via AppScript
+            // Calculate carbon footprint
+            const transportCarbon = transport * 365 * 0.21;
+            const energyCarbon = energy * 12 * 0.4;
+            const foodCarbon = food * 52 * 2.5;
+            const totalCarbonKg = transportCarbon + energyCarbon + foodCarbon;
+
             try {
+                // STEP 1: Save to Firestore
+                console.log("Saving to Firestore...");
+                await db.collection('users').doc(userEmail).set({
+                    email: userEmail,
+                    name: userEmail.split('@')[0],
+                    transport: parseInt(transport),
+                    energy: parseInt(energy),
+                    food: parseInt(food),
+                    carbonFootprint: totalCarbonKg.toFixed(2),
+                    goal: goal,
+                    frequency: frequency,
+                    interests: interests,
+                    emailPref: emailPref,
+                    timestamp: new Date(),
+                    lastUpdated: new Date()
+                }, { merge: true });
+                console.log("✓ Saved to Firestore!");
+
+                // STEP 2: Save to Google Sheet via AppScript
                 const APPSCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzPEgAX5kGcGkOwZxe7ntreX7bgFoqC2A0HWujhg_ccj7kO7XFnHdFkcwWVKGZdffU6UA/exec';
                 
-                // Construct request body with action = updatePreferences
                 const payload = new URLSearchParams({
                     action: 'updatePreferences',
                     email: userEmail,
@@ -361,7 +406,8 @@
                     emailPref: emailPref ? 'Yes' : 'No',
                     transport: transport,
                     energy: energy,
-                    food: food
+                    food: food,
+                    carbonFootprint: totalCarbonKg.toFixed(2)
                 });
 
                 await fetch(APPSCRIPT_URL, { 
@@ -372,8 +418,10 @@
                     },
                     body: payload.toString()
                 });
+                console.log("✓ Saved to Google Sheets!");
+
             } catch (err) {
-                console.log('Data saved locally', err);
+                console.error('Error saving data:', err);
             }
 
             // Show success
