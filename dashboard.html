@@ -332,7 +332,7 @@
                 snapshot.forEach(doc => {
                     const data = doc.data();
                     dates.push(data.date || 'Entry');
-                    footprintData.push(data.carbonFootprint);
+                    footprintData.push(parseFloat(data.carbonFootprint) || 0);
                 });
 
                 const ctx = document.getElementById('trendChart').getContext('2d');
@@ -403,13 +403,14 @@
                 }, { merge: true });
 
                 // 2. Add log entry to history subcollection for trend tracking
+                // AFTER
                 await userRef.collection('logs').add({
                     timestamp: firebase.firestore.FieldValue.serverTimestamp(),
                     date: todayStr,
-                    transport: transport,
-                    energy: energy,
-                    food: food,
-                    carbonFootprint: calculatedTotal.toFixed(2)
+                    transport: Number(transport),
+                    energy: Number(energy),
+                    food: Number(food),
+                    carbonFootprint: Number(calculatedTotal.toFixed(2)) // Saved as a Number, not String
                 });
 
                 // 3. Refresh chart
