@@ -211,6 +211,13 @@
                 <p style="font-size: 14px; color: #6B7280; margin-top: 8px;" id="carbonStatus">Calculating...</p>
             </div>
         </div>
+        <!-- Carbon Trends Card -->
+        <div class="card">
+            <h2>Emissions Trend History</h2>
+            <div style="margin-top: 20px;">
+                <canvas id="trendChart" height="200"></canvas>
+            </div>
+        </div>
 
         <!-- Onboarding Form -->
         <form id="onboardingForm" class="card">
@@ -293,152 +300,128 @@
         </div>
     </div>
     <script>
-        // Get email from URL params
         const params = new URLSearchParams(window.location.search);
         const userEmail = params.get('email') || 'User';
         
-        // Get values from previous form (stored in sessionStorage)
-        const transport = sessionStorage.getItem('transport') || 10;
-        const energy = sessionStorage.getItem('energy') || 100;
-        const food = sessionStorage.getItem('food') || 21;
+        const transport = parseFloat(sessionStorage.getItem('transport')) || 10;
+        const energy = parseFloat(sessionStorage.getItem('energy')) || 100;
+        const food = parseFloat(sessionStorage.getItem('food')) || 21;
 
-        // Update greeting
         document.getElementById('userName').textContent = `Hi ${decodeURIComponent(userEmail)}! Let's understand your carbon footprint.`;
 
-        // Calculate carbon footprint
         function calculateCarbon() {
-            const transportCarbon = transport * 365 * 0.21;
-            const energyCarbon = energy * 12 * 0.4;
-            const foodCarbon = food * 52 * 2.5;
-            const total = transportCarbon + energyCarbon + foodCarbon;
-            
+            const total = (transport * 365 * 0.21) + (energy * 12 * 0.4) + (food * 52 * 2.5);
             document.getElementById('carbonFootprint').textContent = total.toFixed(0) + ' kg CO₂/yr';
-            
-            const average = 4000;
-            if (total < average) {
-                document.getElementById('carbonStatus').textContent = `✓ You're ${((average - total) / average * 100).toFixed(0)}% below average!`;
-            } else {
-                document.getElementById('carbonStatus').textContent = `You're ${((total - average) / average * 100).toFixed(0)}% above average. Room to improve!`;
+            return total;
+        }
+
+        const calculatedTotal = calculateCarbon();
+
+        // Fetch and render the trend chart using Chart.js
+        async function renderTrendChart() {
+            try {
+                const snapshot = await db.collection('users')
+                    .doc(userEmail)
+                    .collection('logs')
+                    .orderBy('timestamp', 'asc')
+                    .get();
+
+                const dates = [];
+                const footprintData = [];
+
+                snapshot.forEach(doc => {
+                    const data = doc.data();
+                    dates.push(data.date || 'Entry');
+                    footprintData.push(data.carbonFootprint);
+                });
+
+                const ctx = document.getElementById('trendChart').getContext('2d');
+                new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: dates.length > 0 ? dates : ['Today'],
+                        datasets: [{
+                            label: 'Carbon Footprint (kg CO₂/yr)',
+                            data: footprintData.length > 0 ? footprintData : [calculatedTotal.toFixed(0)],
+                            borderColor: '#10B981',
+                            backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                            fill: true,
+                            tension: 0.3
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        scales: {
+                            y: { beginAtZero: true }
+                        }
+                    }
+                });
+            } catch (err) {
+                console.error("Error loading trend chart:", err);
             }
         }
 
-        calculateCarbon();
-        
+        // Call chart render on page load
+        renderTrendChart();
 
-        // Tips based on goal
+        // Tips mapping
         const tipsByGoal = {
-            'reduce_energy': [
-                'Switch to LED bulbs (save 75% on lighting)',
-                'Use a programmable thermostat',
-                'Unplug devices when not in use',
-                'Use an energy-efficient refrigerator'
-            ],
-            'sustainable_transport': [
-                'Bike or walk for trips under 2km',
-                'Use public transit instead of driving',
-                'Carpool when possible',
-                'Consider an electric or hybrid vehicle'
-            ],
-            'plant_based': [
-                'Try Meatless Mondays',
-                'Replace beef with plant-based proteins',
-                'Buy local seasonal produce',
-                'Reduce food waste (meal planning)'
-            ],
-            'general': [
-                'Track your carbon footprint regularly',
-                'Share tips with friends & family',
-                'Support renewable energy initiatives',
-                'Reduce overall consumption'
-            ]
+            'reduce_energy': ['Switch to LED bulbs', 'Use a programmable thermostat', 'Unplug idle electronics'],
+            'sustainable_transport': ['Bike or walk for trips under 2km', 'Use public transit', 'Carpool'],
+            'plant_based': ['Try Meatless Mondays', 'Replace beef with plant proteins', 'Buy local produce'],
+            'general': ['Track your carbon footprint regularly', 'Support renewable energy']
         };
 
-        // Form submission
+        // Submit Listener: Saves summary + creates a new log entry for trends
         document.getElementById('onboardingForm').addEventListener('submit', async (e) => {
             e.preventDefault();
 
             const goal = document.querySelector('input[name="goal"]:checked').value;
             const frequency = document.getElementById('frequency').value;
-            const interests = Array.from(document.querySelectorAll('input[name="interests"]:checked'))
-                .map(cb => cb.value).join(', ');
+            const interests = Array.from(document.querySelectorAll('input[name="interests"]:checked')).map(cb => cb.value).join(', ');
             const emailPref = document.getElementById('emailPref').checked;
 
-            // Show tips
             const tips = tipsByGoal[goal] || [];
-            const tipsList = document.getElementById('tipsList');
-            tipsList.innerHTML = tips.map(tip => `<li>${tip}</li>`).join('');
+            document.getElementById('tipsList').innerHTML = tips.map(tip => `<li>${tip}</li>`).join('');
             document.getElementById('tipsCard').style.display = 'block';
 
-            // Calculate carbon footprint
-            const transportCarbon = transport * 365 * 0.21;
-            const energyCarbon = energy * 12 * 0.4;
-            const foodCarbon = food * 52 * 2.5;
-            const totalCarbonKg = transportCarbon + energyCarbon + foodCarbon;
+            const todayStr = new Date().toISOString().split('T')[0];
 
             try {
-                // STEP 1: Save to Firestore
-                console.log("Saving to Firestore...");
-                await db.collection('users').doc(userEmail).set({
+                const userRef = db.collection('users').doc(userEmail);
+
+                // 1. Update user profile document
+                await userRef.set({
                     email: userEmail,
                     name: userEmail.split('@')[0],
-                    transport: parseInt(transport),
-                    energy: parseInt(energy),
-                    food: parseInt(food),
-                    carbonFootprint: totalCarbonKg.toFixed(2),
-                    goal: goal,
-                    frequency: frequency,
-                    interests: interests,
-                    emailPref: emailPref,
-                    timestamp: new Date(),
-                    lastUpdated: new Date()
-                }, { merge: true });
-                console.log("✓ Saved to Firestore!");
-
-                // STEP 2: Save to Google Sheet via AppScript
-                const APPSCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzPEgAX5kGcGkOwZxe7ntreX7bgFoqC2A0HWujhg_ccj7kO7XFnHdFkcwWVKGZdffU6UA/exec';
-                
-                const payload = new URLSearchParams({
-                    action: 'updatePreferences',
-                    email: userEmail,
                     goal: goal,
                     frequency: frequency,
                     interests: interests,
                     emailPref: emailPref ? 'Yes' : 'No',
+                    latestFootprint: calculatedTotal.toFixed(2),
+                    lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
+                }, { merge: true });
+
+                // 2. Add log entry to history subcollection for trend tracking
+                await userRef.collection('logs').add({
+                    timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+                    date: todayStr,
                     transport: transport,
                     energy: energy,
                     food: food,
-                    carbonFootprint: totalCarbonKg.toFixed(2)
+                    carbonFootprint: calculatedTotal.toFixed(2)
                 });
 
-                await fetch(APPSCRIPT_URL, { 
-                    method: 'POST', 
-                    mode: 'no-cors',
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded',
-                    },
-                    body: payload.toString()
-                });
-                console.log("✓ Saved to Google Sheets!");
+                // 3. Refresh chart
+                renderTrendChart();
 
+                document.getElementById('successMsg').classList.add('show');
+                setTimeout(() => document.getElementById('successMsg').classList.remove('show'), 3000);
             } catch (err) {
-                console.error('Error saving data:', err);
+                console.error("Firestore Save Error:", err);
             }
 
-            // Show success
-            document.getElementById('successMsg').classList.add('show');
-            setTimeout(() => {
-                document.getElementById('successMsg').classList.remove('show');
-            }, 3000);
-
-            // Scroll to tips
             document.getElementById('tipsCard').scrollIntoView({ behavior: 'smooth' });
-        });
-
-        // Toggle label
-        document.getElementById('emailPref').addEventListener('change', (e) => {
-            document.getElementById('toggleLabel').textContent = e.target.checked 
-                ? 'Yes, send me tips!' 
-                : 'No thanks';
         });
     </script>
 </body>
