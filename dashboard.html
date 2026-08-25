@@ -412,7 +412,8 @@
         });
 
         const data = await response.json();
-        return data.tips;
+        // Fallback to default tips if data.tips is missing
+        return data.tips || "<li><b>Switch to LEDs:</b> Replace incandescent bulbs with LEDs to lower energy consumption.</li><li><b>Public Transport:</b> Swap one daily drive with public transit.</li><li><b>Meatless Mondays:</b> Reduce meat consumption once a week.</li>";
     } catch (err) {
         console.error("Gemini API Error:", err);
         return "<li><b>Switch to LEDs:</b> Replace incandescent bulbs with LEDs to lower energy consumption.</li><li><b>Public Transport:</b> Swap one daily drive with public transit.</li><li><b>Meatless Mondays:</b> Reduce meat consumption once a week.</li>";
