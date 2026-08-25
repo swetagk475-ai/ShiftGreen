@@ -371,59 +371,110 @@
             'plant_based': ['Try Meatless Mondays', 'Replace beef with plant proteins', 'Buy local produce'],
             'general': ['Track your carbon footprint regularly', 'Support renewable energy']
         };
+        // Function to fetch dynamic AI tips from Gemini API
+    async function fetchAIEcoTips(transport, energy, food, goal) {
+        const GEMINI_API_KEY = "YOUR_GEMINI_API_KEY_HERE"; 
+        const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`;
 
-        // Submit Listener: Saves summary + creates a new log entry for trends
-        document.getElementById('onboardingForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
+        const promptText = `Act as an eco-coach for ShiftGreen. A user has the following carbon footprint profile:
+        - Transport: ${transport} km/day
+        - Energy: ${energy} kWh/month
+        - Food: ${food} meals/week
+        - Primary Goal: ${goal}
 
-            const goal = document.querySelector('input[name="goal"]:checked').value;
-            const frequency = document.getElementById('frequency').value;
-            const interests = Array.from(document.querySelectorAll('input[name="interests"]:checked')).map(cb => cb.value).join(', ');
-            const emailPref = document.getElementById('emailPref').checked;
+        Provide 3 short, actionable eco-friendly tips to lower their carbon footprint. Format as clean HTML list items (<li>...</li>) with bold titles, but do not use markdown code blocks or outer tags.`;
 
-            const tips = tipsByGoal[goal] || [];
-            document.getElementById('tipsList').innerHTML = tips.map(tip => `<li>${tip}</li>`).join('');
-            document.getElementById('tipsCard').style.display = 'block';
+        try {
+            const response = await fetch(endpoint, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    contents: [{ parts: [{ text: promptText }] }]
+                })
+            });
 
-            const todayStr = new Date().toISOString().split('T')[0];
+            const data = await response.json();
+            return data.candidates[0].content.parts[0].text;
+        } catch (err) {
+            console.error("Gemini API Error:", err);
+            return "<li><b>Switch to LEDs:</b> Replace incandescent bulbs with LEDs to lower energy consumption.</li><li><b>Public Transport:</b> Swap one daily drive with public transit.</li><li><b>Meatless Mondays:</b> Reduce meat consumption once a week.</li>";
+        }
+    }
 
-            try {
-                const userRef = db.collection('users').doc(userEmail);
-
-                // 1. Update user profile document
-                await userRef.set({
-                    email: userEmail,
-                    name: userEmail.split('@')[0],
-                    goal: goal,
-                    frequency: frequency,
-                    interests: interests,
-                    emailPref: emailPref ? 'Yes' : 'No',
-                    latestFootprint: calculatedTotal.toFixed(2),
-                    lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
-                }, { merge: true });
-
-                // 2. Add log entry to history subcollection for trend tracking
-                // AFTER
-                await userRef.collection('logs').add({
-                    timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-                    date: todayStr,
-                    transport: Number(transport),
-                    energy: Number(energy),
-                    food: Number(food),
-                    carbonFootprint: Number(calculatedTotal.toFixed(2)) // Saved as a Number, not String
-                });
-
-                // 3. Refresh chart
-                renderTrendChart();
-
-                document.getElementById('successMsg').classList.add('show');
-                setTimeout(() => document.getElementById('successMsg').classList.remove('show'), 3000);
-            } catch (err) {
-                console.error("Firestore Save Error:", err);
-            }
-
-            document.getElementById('tipsCard').scrollIntoView({ behavior: 'smooth' });
+    // Submit Listener: Saves summary, creating AI tips and writing log entry
+    // Function to fetch dynamic AI tips from Gemini API
+    async function fetchAIEcoTips(transport, energy, food, goal) {
+    try {
+        const response = await fetch('/api/tips', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ transport, energy, food, goal })
         });
+
+        const data = await response.json();
+        return data.tips;
+    } catch (err) {
+        console.error("Gemini API Error:", err);
+        return "<li><b>Switch to LEDs:</b> Replace incandescent bulbs with LEDs to lower energy consumption.</li><li><b>Public Transport:</b> Swap one daily drive with public transit.</li><li><b>Meatless Mondays:</b> Reduce meat consumption once a week.</li>";
+    }
+}
+
+    // Submit Listener: Saves summary, creating AI tips and writing log entry
+    document.getElementById('onboardingForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const goal = document.querySelector('input[name="goal"]:checked').value;
+        const frequency = document.getElementById('frequency').value;
+        const interests = Array.from(document.querySelectorAll('input[name="interests"]:checked')).map(cb => cb.value).join(', ');
+        const emailPref = document.getElementById('emailPref').checked;
+
+        // 1. Show loading state for AI tips
+        document.getElementById('tipsList').innerHTML = '<li>🤖 Generating your personalized AI eco tips...</li>';
+        document.getElementById('tipsCard').style.display = 'block';
+
+        // 2. Fetch dynamic AI tips
+        const aiTipsHTML = await fetchAIEcoTips(transport, energy, food, goal);
+        document.getElementById('tipsList').innerHTML = aiTipsHTML;
+
+        const todayStr = new Date().toISOString().split('T')[0];
+
+        try {
+            const userRef = db.collection('users').doc(userEmail);
+
+            // 3. Update user profile document
+            await userRef.set({
+                email: userEmail,
+                name: userEmail.split('@')[0],
+                goal: goal,
+                frequency: frequency,
+                interests: interests,
+                emailPref: emailPref ? 'Yes' : 'No',
+                latestFootprint: calculatedTotal.toFixed(2),
+                lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
+            }, { merge: true });
+
+            // 4. Add log entry to history subcollection for trend tracking
+            await userRef.collection('logs').add({
+                timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+                date: todayStr,
+                transport: Number(transport),
+                energy: Number(energy),
+                food: Number(food),
+                carbonFootprint: Number(calculatedTotal.toFixed(2))
+            });
+
+            // 5. Refresh chart
+            renderTrendChart();
+
+            document.getElementById('successMsg').classList.add('show');
+            setTimeout(() => document.getElementById('successMsg').classList.remove('show'), 3000);
+        } catch (err) {
+            console.error("Firestore Save Error:", err);
+        }
+
+        document.getElementById('tipsCard').scrollIntoView({ behavior: 'smooth' });
+    });
+        
     </script>
 </body>
 </html>
