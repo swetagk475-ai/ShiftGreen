@@ -382,11 +382,12 @@
         document.getElementById('onboardingForm').addEventListener('submit', async (e) => {
             e.preventDefault();
 
-            const goal = document.querySelector('input[name="goal"]:checked').value;
+            const selectedGoalEl = document.querySelector('input[name="goal"]:checked');
+            const goal = selectedGoalEl ? selectedGoalEl.value : 'general';
             const frequency = document.getElementById('frequency').value;
             const interests = Array.from(document.querySelectorAll('input[name="interests"]:checked')).map(cb => cb.value).join(', ');
             const emailPref = document.getElementById('emailPref').checked;
-
+            
             document.getElementById('tipsList').innerHTML = '<li>🤖 Generating your personalized AI eco tips...</li>';
             document.getElementById('tipsCard').style.display = 'block';
 
