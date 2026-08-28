@@ -316,6 +316,8 @@
         }
 
         const calculatedTotal = calculateCarbon();
+        // Track the active chart instance
+        let trendChartInstance = null;
 
         // Render trend chart using Chart.js
         async function renderTrendChart() {
@@ -336,7 +338,13 @@
                 });
 
                 const ctx = document.getElementById('trendChart').getContext('2d');
-                new Chart(ctx, {
+
+                // Destroy existing chart to prevent "Canvas is already in use" error
+                if (trendChartInstance) {
+                    trendChartInstance.destroy();
+                }
+
+                trendChartInstance = new Chart(ctx, {
                     type: 'line',
                     data: {
                         labels: dates.length > 0 ? dates : ['Today'],
