@@ -317,10 +317,7 @@
 
         const calculatedTotal = calculateCarbon();
         // Track the active chart instance
-        // Add this variable near the top of your script block
-        let trendChartInstance = null;
-
-        // Replace your existing renderTrendChart function with this:
+        // Render trend chart using Chart.js
         async function renderTrendChart() {
             try {
                 const snapshot = await db.collection('users')
@@ -338,14 +335,15 @@
                     footprintData.push(parseFloat(data.carbonFootprint) || 0);
                 });
 
-                const ctx = document.getElementById('trendChart').getContext('2d');
-
-                // Destroy existing instance to prevent "Canvas is already in use" error
-                if (trendChartInstance) {
-                    trendChartInstance.destroy();
+                // Destroy any active chart bound to the 'trendChart' canvas
+                const existingChart = Chart.getChart('trendChart');
+                if (existingChart) {
+                    existingChart.destroy();
                 }
 
-                trendChartInstance = new Chart(ctx, {
+                const ctx = document.getElementById('trendChart').getContext('2d');
+
+                new Chart(ctx, {
                     type: 'line',
                     data: {
                         labels: dates.length > 0 ? dates : ['Today'],
