@@ -1,6 +1,6 @@
 export default async function handler(req, res) {
-  // 1. Set CORS headers to allow requests from any origin
-  res.setHeader('Access-Control-Allow-Credentials', true);
+  // 1. Set CORS headers
+  res.setHeader('Access-Control-Allow-Credentials', 'true');
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,PATCH,DELETE,POST,PUT');
   res.setHeader(
@@ -8,18 +8,17 @@ export default async function handler(req, res) {
     'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version'
   );
 
-  // 2. Handle HTTP OPTIONS preflight request
+  // 2. Handle preflight request
   if (req.method === 'OPTIONS') {
-    res.status(200).end();
-    return;
+    return res.status(200).end();
   }
 
-  // 3. Validate request method
+  // 3. Reject non-POST requests
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method Not Allowed' });
   }
 
-  // 4. Execute Gemini API Call inside handler block
+  // 4. Gemini API request inside the handler
   try {
     const { transport, energy, food, goal } = req.body;
     const apiKey = process.env.GEMINI_API_KEY;

@@ -317,9 +317,10 @@
 
         const calculatedTotal = calculateCarbon();
         // Track the active chart instance
+        // Add this variable near the top of your script block
         let trendChartInstance = null;
 
-        // Render trend chart using Chart.js
+        // Replace your existing renderTrendChart function with this:
         async function renderTrendChart() {
             try {
                 const snapshot = await db.collection('users')
@@ -339,7 +340,7 @@
 
                 const ctx = document.getElementById('trendChart').getContext('2d');
 
-                // Destroy existing chart to prevent "Canvas is already in use" error
+                // Destroy existing instance to prevent "Canvas is already in use" error
                 if (trendChartInstance) {
                     trendChartInstance.destroy();
                 }
@@ -367,24 +368,24 @@
             }
         }
 
-        renderTrendChart();
+                renderTrendChart();
 
-        // Single definition of fetchAIEcoTips
-        async function fetchAIEcoTips(transport, energy, food, goal) {
-            try {
-                const response = await fetch('/api/tips', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ transport, energy, food, goal })
-                });
+                // Single definition of fetchAIEcoTips
+                async function fetchAIEcoTips(transport, energy, food, goal) {
+                    try {
+                        const response = await fetch('/api/tips', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ transport, energy, food, goal })
+                        });
 
-                const data = await response.json();
-                return data.tips || "<li><b>Switch to LEDs:</b> Replace incandescent bulbs with LEDs to lower energy consumption.</li><li><b>Public Transport:</b> Swap one daily drive with public transit.</li><li><b>Meatless Mondays:</b> Reduce meat consumption once a week.</li>";
-            } catch (err) {
-                console.error("Gemini API Error:", err);
-                return "<li><b>Switch to LEDs:</b> Replace incandescent bulbs with LEDs to lower energy consumption.</li><li><b>Public Transport:</b> Swap one daily drive with public transit.</li><li><b>Meatless Mondays:</b> Reduce meat consumption once a week.</li>";
-            }
-        }
+                        const data = await response.json();
+                        return data.tips || "<li><b>Switch to LEDs:</b> Replace incandescent bulbs with LEDs to lower energy consumption.</li><li><b>Public Transport:</b> Swap one daily drive with public transit.</li><li><b>Meatless Mondays:</b> Reduce meat consumption once a week.</li>";
+                    } catch (err) {
+                        console.error("Gemini API Error:", err);
+                        return "<li><b>Switch to LEDs:</b> Replace incandescent bulbs with LEDs to lower energy consumption.</li><li><b>Public Transport:</b> Swap one daily drive with public transit.</li><li><b>Meatless Mondays:</b> Reduce meat consumption once a week.</li>";
+                    }
+                }
 
         // Form Submit Listener
         document.getElementById('onboardingForm').addEventListener('submit', async (e) => {
