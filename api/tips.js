@@ -22,30 +22,33 @@ export default async function handler(req, res) {
 
     Provide 3 short, actionable eco-friendly tips to lower their carbon footprint. Format as clean HTML list items (<li>...</li>) with bold titles, but do not use markdown code blocks or outer tags.`;
 
-    // Fetch using model alias and x-goog-api-key header
-    const response = await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-goog-api-key': apiKey
-      },
-      body: JSON.stringify({
-        contents: [{ parts: [{ text: prompt }] }]
-      })
-    });
+    // Array of fallback models to cycle through if one experiences high demand
+    const models = ['gemini-2.0-flash', 'gemini-1.5-flash', 'gemini-2.0-flash-lite'];
+    let lastError = null;
 
-    const data = await response.json();
+    for (const model of models) {
+      try {
+        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
+        });
 
-    if (!response.ok || data.error) {
-      console.error("Gemini API Error details:", JSON.stringify(data.error || data));
-      return res.status(500).json({ error: data.error?.message || JSON.stringify(data) });
+        const data = await response.json();
+
+        if (response.ok && data?.candidates?.[0]?.content?.parts?.[0]?.text) {
+          return res.status(200).json({ tips: data.candidates[0].content.parts[0].text });
+        }
+
+        lastError = data.error?.message || 'Model call failed';
+      } catch (e) {
+        lastError = e.message;
+      }
     }
 
-    const tipsHtml = data?.candidates?.[0]?.content?.parts?.[0]?.text;
-    return res.status(200).json({ tips: tipsHtml });
+    return res.status(503).json({ error: `High demand on all endpoints: ${lastError}` });
 
   } catch (err) {
-    console.error("API Route Handler Error:", err);
     return res.status(500).json({ error: err.message });
   }
 }
