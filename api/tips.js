@@ -24,7 +24,8 @@ export default async function handler(req, res) {
 
     Provide 3 short, actionable eco-friendly tips to lower their carbon footprint. Format as clean HTML list items (<li>...</li>) with bold titles, but do not use markdown code blocks or outer tags.`;
 
-    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
+    // Endpoint updated to gemini-2.0-flash
+    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
@@ -33,6 +34,7 @@ export default async function handler(req, res) {
     const data = await response.json();
 
     if (!response.ok || data.error) {
+      console.error("Gemini API Error details:", JSON.stringify(data.error || data));
       return res.status(500).json({ error: data.error?.message || JSON.stringify(data) });
     }
 
