@@ -335,7 +335,7 @@
                     footprintData.push(parseFloat(data.carbonFootprint) || 0);
                 });
 
-                // Destroy any active chart bound to the 'trendChart' canvas
+                // Automatically find and destroy any existing chart on this canvas
                 const existingChart = Chart.getChart('trendChart');
                 if (existingChart) {
                     existingChart.destroy();

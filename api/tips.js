@@ -1,31 +1,25 @@
 export default async function handler(req, res) {
-  // 1. Set CORS headers
   res.setHeader('Access-Control-Allow-Credentials', 'true');
   res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,PATCH,DELETE,POST,PUT');
-  res.setHeader(
-    'Access-Control-Allow-Headers',
-    'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version'
-  );
+  res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,POST');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
-  // 2. Handle preflight request
   if (req.method === 'OPTIONS') {
     return res.status(200).end();
   }
 
-  // 3. Reject non-POST requests
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method Not Allowed' });
   }
 
-  // 4. Gemini API request inside the handler
   try {
-    const { transport, energy, food, goal } = req.body;
+    const body = typeof req.body === 'string' ? JSON.parse(req.body) : (req.body || {});
+    const { transport, energy, food, goal } = body;
     const apiKey = process.env.GEMINI_API_KEY;
 
     if (!apiKey) {
       console.error("GEMINI_API_KEY environment variable is missing.");
-      return res.status(500).json({ error: 'API key not configured' });
+      return res.status(500).json({ error: 'API key not configured in Vercel environment' });
     }
 
     const prompt = `Act as an eco-coach for ShiftGreen. A user has the following carbon footprint profile:
@@ -45,16 +39,21 @@ export default async function handler(req, res) {
     });
 
     const data = await response.json();
+
+    if (!response.ok || data.error) {
+      console.error("Gemini API Error details:", data.error || data);
+      return res.status(500).json({ error: data.error?.message || 'Gemini API request failed' });
+    }
+
     const tipsHtml = data?.candidates?.[0]?.content?.parts?.[0]?.text;
 
     if (!tipsHtml) {
-      console.error("Gemini response missing text:", data);
-      return res.status(500).json({ error: 'Invalid response from AI' });
+      return res.status(500).json({ error: 'No content generated from AI' });
     }
 
     return res.status(200).json({ tips: tipsHtml });
   } catch (err) {
-    console.error("API Route Error:", err);
-    return res.status(500).json({ error: 'Failed to generate tips' });
+    console.error("API Route Handler Error:", err);
+    return res.status(500).json({ error: err.message });
   }
 }
