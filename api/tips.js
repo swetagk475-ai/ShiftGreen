@@ -21,7 +21,6 @@ export default async function handler(req, res) {
 
   try {
     const prompt = `You are an expert eco-coach for ShiftGreen carbon tracking.
-
     User's Carbon Profile:
     - Transport: ${transport} km/day (${(transport * 365 * 0.21).toFixed(0)} kg CO₂/year)
     - Energy: ${energy} kWh/month (${(energy * 12 * 0.4).toFixed(0)} kg CO₂/year)
