@@ -7,9 +7,9 @@ export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method Not Allowed' });
 
   const fallbackTips = `
-    <li>🌱 <b>Switch to LEDs:</b> Replace incandescent bulbs to cut energy use.</li>
-    <li>🌱 <b>Public Transit:</b> Swap one car commute weekly for bus or train.</li>
-    <li>🌱 <b>Meatless Meals:</b> Reduce meat intake to lower food footprint.</li>
+    <li><b>Switch to LEDs:</b> Replace incandescent bulbs to cut energy use.</li>
+    <li><b>Public Transit:</b> Swap one car commute weekly for bus or train.</li>
+    <li><b>Meatless Meals:</b> Reduce meat intake to lower food footprint.</li>
   `;
 
   try {
