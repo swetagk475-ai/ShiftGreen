@@ -20,8 +20,25 @@ export default async function handler(req, res) {
   }
 
   try {
-    const prompt = `Act as an eco-coach for ShiftGreen. A user has: Transport ${transport} km/day, Energy ${energy} kWh/month, Food ${food} meals/week, Goal: ${goal}. Give 3 short, actionable eco-friendly tips as HTML list items only. Format: <li>Title: Description</li>`;
+    const prompt = `You are an expert eco-coach for ShiftGreen carbon tracking.
 
+    User's Carbon Profile:
+    - Transport: ${transport} km/day (${(transport * 365 * 0.21).toFixed(0)} kg CO₂/year)
+    - Energy: ${energy} kWh/month (${(energy * 12 * 0.4).toFixed(0)} kg CO₂/year)
+    - Food: ${food} meals/week (${(food * 52 * 2.5).toFixed(0)} kg CO₂/year)
+    - Goal: ${goal}
+
+    Biggest emission source: ${biggestSource}
+
+    Generate 5-7 HIGHLY PERSONALIZED, specific, actionable eco tips:
+    1. Address their BIGGEST emission source first
+    2. Tie to their specific numbers (e.g., "Your ${food} meals/week suggests...")
+    3. Estimate impact in kg CO₂/year saved
+    4. Make each tip unique (not generic "use less energy")
+
+    Example: "You eat ${food} meals/week. Swapping 3 meat meals for plant-based saves ~450kg CO₂/year."
+
+    Format as HTML list items only.`;
     const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
       method: 'POST',
       headers: {
