@@ -20,63 +20,46 @@ export default async function handler(req, res) {
   }
 
   try {
-    const prompt = `Act as an eco-coach for ShiftGreen. A user has: Transport ${transport} km/day, Energy ${energy} kWh/month, Food ${food} meals/week, Goal: ${goal}. Give 3 short eco tips as HTML list items only.`;
+    const prompt = `Act as an eco-coach for ShiftGreen. A user has: Transport ${transport} km/day, Energy ${energy} kWh/month, Food ${food} meals/week, Goal: ${goal}. Give 3 short, actionable eco-friendly tips as HTML list items only. Format strictly as <li>...</li> tags with bold titles.`;
 
-    // Try multiple models in order (Groq's model names change)
-    const models = [
-      'mixtral-8x7b-32768',      // Most reliable Groq model
-      'llama-2-70b-chat',        // Fallback Llama
-      'gemma-7b-it',             // Another option
-    ];
+    const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${apiKey}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        model: 'openai/gpt-oss-120b',  // ✅ CURRENT WORKING MODEL
+        messages: [{ role: 'user', content: prompt }],
+        temperature: 0.7,
+        max_tokens: 300
+      })
+    });
 
-    let lastError = null;
+    const data = await response.json();
 
-    for (const model of models) {
-      try {
-        const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
-          method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${apiKey}`,
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            model: model,  // Try this model
-            messages: [{ role: 'user', content: prompt }],
-            temperature: 0.7,
-            max_tokens: 300
-          })
-        });
-
-        const data = await response.json();
-
-        if (response.ok && data?.choices?.[0]?.message?.content) {
-          return res.status(200).json({ 
-            tips: data.choices[0].message.content,
-            isAI: true
-          });
-        }
-
-        // If model not found, try next one
-        if (data?.error?.message?.includes('model')) {
-          lastError = `Model ${model} not found, trying next...`;
-          continue;
-        }
-
-        // Other error
-        lastError = data?.error?.message || 'API error';
-        continue;
-
-      } catch (err) {
-        lastError = err.message;
-        continue;
-      }
+    // Check if API returned an error
+    if (!response.ok || !data?.choices?.[0]?.message?.content) {
+      return res.status(200).json({ 
+        tips: fallbackTips, 
+        isAI: false,
+        debug: data?.error?.message || 'API error'
+      });
     }
 
-    // All models failed, return fallback
-    return res.status(200).json({ tips: fallbackTips, isAI: false });
+    // SUCCESS - Return AI-generated tips
+    return res.status(200).json({ 
+      tips: data.choices[0].message.content,
+      isAI: true
+    });
 
   } catch (err) {
-    return res.status(200).json({ tips: fallbackTips, isAI: false });
+    // Network error or other exception - return fallback
+    return res.status(200).json({ 
+      tips: fallbackTips, 
+      isAI: false,
+      error: err.message
+    });
   }
 }
 
